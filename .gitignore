@@ -1,0 +1,7 @@
+
+# Não adicionar arquivos binários
+*
+!/**/
+!*.*
+
+**/.vscode
