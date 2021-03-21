@@ -4,7 +4,7 @@
 
 void main () {
     char *str, *strAux, c;
-    int options, sizeStr = 0, sizeSplit = 0;
+    int options, sizeStr = 0, sizeSplit = 0, i;
 
     do {
         printf("1) Adicionar nome\n2) Remover nome\n3) Listar\n4) Sair\n");
@@ -14,35 +14,39 @@ void main () {
         switch(options) {
             case 1: {
                 if (sizeStr != 0) {
-                    str[sizeStr] = ',';
+                    str[sizeStr] = '\n';
                     sizeStr++;
-                    str = (char *) realloc(str, sizeStr * sizeof(char));
+                    str = (char *) realloc(str, (sizeStr + 1) * sizeof(char));
                 }
                 while ((c = getchar()) != '\n') {
-                    if(sizeStr == 0) str = (char *) malloc(sizeof(char));
-                    else str = (char *) realloc(str, sizeStr * sizeof(char));
+                    if(sizeStr == 0) str = (char *) malloc(2 + sizeof(char));
+                    else str = (char *) realloc(str, (sizeStr + 2) * sizeof(char));
 
                     str[sizeStr] = c;
                     sizeStr++;
                 }
+                str[sizeStr] = '\0';
                 break;
             }
             case 2: {
-               sizeSplit = sizeStr--;
+               sizeSplit = sizeStr - 1;
 
-               while (sizeSplit > 0 && str[sizeSplit] != ',') sizeSplit--;
+               while (sizeSplit > 0 && str[sizeSplit] != '\n') sizeSplit--;
 
-               if (sizeSplit == 0) {
-                   free(str);
+               if (sizeSplit <= 0) {
+                   if (str != NULL ) free(str);
                    sizeStr = 0;
+                   break;
                }
-               else if (str[sizeSplit] == ',') {
-                   strAux = (char *) malloc(sizeSplit * sizeof(char));
 
-                   for (int i = 0; i < sizeSplit; i++) strAux[i] = str[i];
+               if (str[sizeSplit] == '\n') {
+                   strAux = (char *) malloc((sizeSplit + 1) * sizeof(char));
+
+                   for (i = 0; i < sizeSplit; i++) strAux[i] = str[i];
 
                    free(str);
 
+                   strAux[sizeSplit] = '\0';
                    str = strAux;
                    sizeStr = sizeSplit;
                }
@@ -50,10 +54,7 @@ void main () {
             }
             case 3: {
                 if (sizeStr > 0) {
-                   for (int i = 0; i < sizeStr; i++) {
-                       if (str[i] == ',') printf("\n");
-                       else printf("%c", str[i]);
-                   }
+                    printf("%s", str);
                 }
                 else printf("Não existem nomes salvos!");
 
@@ -61,12 +62,13 @@ void main () {
                 
                 break;
             }
-            case 4:
+            case 4: {
+                if (sizeStr > 0) free(str);
+            }
             default:
                 break;
         }
 
     } while(options != 4);
 
-    free(str);
 }
