@@ -114,14 +114,13 @@ int main () {
                 break;
             }
             case 4: {
-                if (string != NULL) free(string);
-                if (stringAuxiliary != NULL) free(stringAuxiliary);
+                if (stringSize > 0) free(string);
             }
             default:
                 break;
         }
 
     } while(options != 4);
-
+      
     return 0;
 }
