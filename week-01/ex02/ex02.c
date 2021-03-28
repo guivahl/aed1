@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-void main () {
-    char *str, *strAux, c;
-    int options, sizeStr = 0, sizeSplit = 0, i;
+int main () {
+    char *string, *stringAuxiliary, charRead;
+    int options, stringSize = 0, iterator, stringRemoveSize, stringIterator, removeStringIterator, subStringSizeCounter, hasMoreStrings;
 
     do {
         printf("1) Adicionar nome\n2) Remover nome\n3) Listar\n4) Sair\n");
@@ -13,48 +13,99 @@ void main () {
 
         switch(options) {
             case 1: {
-                if (sizeStr != 0) {
-                    str[sizeStr] = '\n';
-                    sizeStr++;
-                    str = (char *) realloc(str, (sizeStr + 1) * sizeof(char));
+                if (stringSize != 0) {
+                    string[stringSize] = '\n';
+                    stringSize++;
+                    string = (char *) realloc(string, (stringSize + 1) * sizeof(char));
+                    
+                    if (string == NULL) return -1;
                 }
-                while ((c = getchar()) != '\n') {
-                    if(sizeStr == 0) str = (char *) malloc(2 + sizeof(char));
-                    else str = (char *) realloc(str, (sizeStr + 2) * sizeof(char));
+                while ((charRead = getchar()) != '\n') {
+                    if(stringSize == 0) string = (char *) malloc(2 + sizeof(char));
+                    else string = (char *) realloc(string, (stringSize + 2) * sizeof(char));
 
-                    str[sizeStr] = c;
-                    sizeStr++;
+                    if (string == NULL) return -1;
+
+                    string[stringSize] = charRead;
+                    stringSize++;
                 }
-                str[sizeStr] = '\0';
+                string[stringSize] = '\0';
                 break;
             }
-            case 2: {
-               sizeSplit = sizeStr - 1;
+            case 2:  {
+                stringIterator = 0;
+                stringRemoveSize = 0;
+                subStringSizeCounter = 0;
 
-               while (sizeSplit > 0 && str[sizeSplit] != '\n') sizeSplit--;
+                if (stringSize <= 0) {
+                    printf("Não existem nomes salvos!\n");
+                    break;
+                }
 
-               if (sizeSplit <= 0) {
-                   if (str != NULL ) free(str);
-                   sizeStr = 0;
-                   break;
-               }
+                while ((charRead = getchar()) != '\n') {
+                    if(stringRemoveSize == 0) stringAuxiliary = (char *) malloc(2 + sizeof(char));
+                    else stringAuxiliary = (char *) realloc(stringAuxiliary, (stringRemoveSize + 2) * sizeof(char));
 
-               if (str[sizeSplit] == '\n') {
-                   strAux = (char *) malloc((sizeSplit + 1) * sizeof(char));
+                    if (stringAuxiliary == NULL) return -1;
 
-                   for (i = 0; i < sizeSplit; i++) strAux[i] = str[i];
+                    stringAuxiliary[stringRemoveSize] = charRead;
+                    stringRemoveSize++;
+                }
 
-                   free(str);
+                stringAuxiliary[stringRemoveSize] = '\0';
 
-                   strAux[sizeSplit] = '\0';
-                   str = strAux;
-                   sizeStr = sizeSplit;
-               }
-               break;
+                while (string != NULL && stringSize > stringIterator && string[stringIterator] != '\0') {
+                    while (string[stringIterator + subStringSizeCounter] != '\n' && string[stringIterator + subStringSizeCounter] != '\0') subStringSizeCounter++;
+
+                    if (subStringSizeCounter == stringRemoveSize) {
+                        iterator = 0;
+                        while (string[stringIterator + iterator] == stringAuxiliary[iterator] && iterator < subStringSizeCounter) {
+                            iterator++;
+                        }
+                        if (subStringSizeCounter == iterator) {
+                            if (subStringSizeCounter == stringSize) {
+                                free(string);
+                                stringSize = 0;
+                            } 
+                            else {
+                                removeStringIterator = stringIterator;
+                                hasMoreStrings = 0;
+
+                                if (string[removeStringIterator + subStringSizeCounter] == '\n') {
+                                    hasMoreStrings = 1;
+                                }                            
+
+                                if (string[removeStringIterator + subStringSizeCounter] != '\0')
+                                    while ((removeStringIterator + subStringSizeCounter + hasMoreStrings) <= stringSize) {
+                                        string[removeStringIterator] = string[removeStringIterator + subStringSizeCounter + hasMoreStrings];
+                                        removeStringIterator++;
+                                    }
+
+                                stringSize = stringSize - subStringSizeCounter - 1;
+
+                                string = (char *) realloc(string, (stringSize + 2) * sizeof(char));
+
+                                string[stringSize] = '\0';
+
+                                subStringSizeCounter = 0;
+                            }
+                        }
+                    }
+                stringIterator+= subStringSizeCounter;
+
+                if (stringSize > 0 && stringSize > (stringIterator + subStringSizeCounter) && string[stringIterator + subStringSizeCounter] == '\n') {
+                    stringIterator+= 1;
+                }                            
+
+                subStringSizeCounter = 0;
+                hasMoreStrings = 0;
+                }
+                if (stringAuxiliary != NULL) free(stringAuxiliary);
+                break;
             }
             case 3: {
-                if (sizeStr > 0) {
-                    printf("%s", str);
+                if (stringSize > 0) {
+                    printf("%s", string);
                 }
                 else printf("Não existem nomes salvos!");
 
@@ -63,12 +114,13 @@ void main () {
                 break;
             }
             case 4: {
-                if (sizeStr > 0) free(str);
+                if (stringSize > 0) free(string);
             }
             default:
                 break;
         }
 
     } while(options != 4);
-
+      
+    return 0;
 }
