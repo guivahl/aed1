@@ -22,3 +22,4 @@ Cada pessoa tem nome[10], idade e telefone.
 
 # Melhorias
 1 - Utilizar funções para cada um dos itens no menu
+2 - Ao remover, após identificar e retirar a pessoa, deslocar blocos maiores de memória ao invés de cada informação individualmente na realocação de memória.
