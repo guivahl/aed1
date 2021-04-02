@@ -12,5 +12,4 @@ Faça o seguinte menu:
 4) Sair
 
 # Melhorias
-1 - Utilizar funções para cada um dos itens no menu. \
-2 - Utilizar vetor de vetores de characteres para armazenar os nomes. 
+1 - Utilizar funções para cada um dos itens no menu. 
