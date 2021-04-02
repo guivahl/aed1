@@ -12,6 +12,7 @@
 
 int main () {
     int options = 0, qtdPeople = 0;
+    char searchName[10];
     void *pBuffer = NULL;
 
     printf("Agenda\nRegras:\n1- Nome até caracteres\n2- Telefones DDD+Número\n");
@@ -45,9 +46,40 @@ int main () {
 
                 break;
             }
-            case 2:{
+            case 2: {
+                scanf("%s", searchName);
+                getchar();
+
+                for(int i = 0; i < qtdPeople; i++) {
+                    if((strcmp((char*)(pBuffer + QTD_PEOPLE_POSITION + (TOTAL_SIZE * i)), searchName) == 0)) { 
+                        for (int j = i; j < (qtdPeople - 1); j++) {
+                            strcpy((char*)(pBuffer + QTD_PEOPLE_POSITION + (TOTAL_SIZE * j)), (char*)(pBuffer + QTD_PEOPLE_POSITION + (TOTAL_SIZE * (j + 1)))); 
+                            
+                            *(int*)(pBuffer + QTD_PEOPLE_POSITION + NAME_SIZE + (TOTAL_SIZE * j)) = *(int*)(pBuffer + QTD_PEOPLE_POSITION + NAME_SIZE + (TOTAL_SIZE * (j + 1)));
+                            
+                            strcpy((char*)(pBuffer + QTD_PEOPLE_POSITION + NAME_SIZE + AGE_SIZE + (TOTAL_SIZE * j)), (char*)(pBuffer + QTD_PEOPLE_POSITION + NAME_SIZE + AGE_SIZE + (TOTAL_SIZE * (j + 1)))); 
+                        }
+                        qtdPeople = qtdPeople - 1;  
+
+                        *(int*)(pBuffer) = qtdPeople;
+                        
+                        pBuffer = realloc(pBuffer, (QTD_PEOPLE_POSITION) + (TOTAL_SIZE * (qtdPeople)));
+                    }
+                }
+                break;
             }
             case 3: {
+                scanf("%s", searchName);
+                getchar();
+
+                for(int i = 0; i < qtdPeople; i++) {
+                    if((strcmp((char*)(pBuffer + QTD_PEOPLE_POSITION + (TOTAL_SIZE * i)), searchName) == 0)) { 
+                        printf("Nome: %s \n", (char*)(pBuffer + QTD_PEOPLE_POSITION + (TOTAL_SIZE * i)));
+                        printf("Idade: %d\n", *(int*)(pBuffer + QTD_PEOPLE_POSITION + NAME_SIZE + (TOTAL_SIZE * i))); 
+                        printf("Telefone: %s\n", (char*)(pBuffer + QTD_PEOPLE_POSITION + NAME_SIZE + AGE_SIZE + (TOTAL_SIZE * i))); 
+                    }
+                }
+                break;
             }
             case 4: {
                 for(int i = 0; i < qtdPeople; i++) {
