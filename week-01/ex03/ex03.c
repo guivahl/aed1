@@ -6,9 +6,9 @@
 
 #define NAME_SIZE (10 * sizeof(char))
 #define AGE_SIZE (1 * sizeof(int))
-#define PHONE_SIZE (11 * sizeof(char))
+#define PHONE_SIZE (12 * sizeof(char))
 
-#define TOTAL_SIZE ((10 * sizeof(char)) + (1 * sizeof(int)) + (11 * sizeof(char)))
+#define TOTAL_SIZE ((10 * sizeof(char)) + (1 * sizeof(int)) + (12 * sizeof(char)))
 
 int main () {
     int options = 0, qtdPeople = 0;
@@ -90,7 +90,7 @@ int main () {
                 break;
             }            
             case 5: {
-                if(pBuffer = NULL) free(pBuffer);
+                if(pBuffer != NULL) free(pBuffer);
             }
             default:
                 break;
