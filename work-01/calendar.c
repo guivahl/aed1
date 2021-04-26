@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 
-#define QTD_VARIABLES (4 * sizeof(int))
+#define QTD_VARIABLES (5 * sizeof(int))
 #define NAME_SIZE (10 * sizeof(char))
 #define PHONE_SIZE (12 * sizeof(char))
 
@@ -11,6 +11,7 @@
 #define SORT_FIELD (*(int*)(pBuffer + sizeof(int)))
 #define SORT_ORDER (*(int*)(pBuffer + 2 * sizeof(int)))
 #define OFFSET (*(int*)(pBuffer + 3 * sizeof(int)))
+#define SHOULD_SWAP (*(int*)(pBuffer + 4 * sizeof(int)))
 
 #define SORT_NO 1
 #define SORT_NAME 2
@@ -117,14 +118,15 @@ void sort(Fila *fila, void *pBuffer) {
         Nodo *nodo = malloc(sizeof(Nodo)); 
 
         OFFSET = 0;
+        SHOULD_SWAP = 0;
 
         printf("Deseja ordenar a agenda? \n1) Não\n2) Por nome\n3) Por idade\n4) Por telefone\n5) Sair\n");
         scanf("%d", &SORT_FIELD);
         getchar(); 
 
-        // printf("Como a agenda deve ser ordenada? \n1) Crescente\n2) Decrescente\n");
-        // scanf("%d", &SORT_ORDER);
-        // getchar();
+        printf("Como a agenda deve ser ordenada? \n1) Crescente\n2) Decrescente\n");
+        scanf("%d", &SORT_ORDER);
+        getchar();
 
         if (SORT_FIELD != SORT_NO) { 
             Nodo *auxNodo = malloc(sizeof(Nodo)); 
@@ -148,6 +150,17 @@ void sort(Fila *fila, void *pBuffer) {
                 for (auxNodo = nodo->pointerNext; auxNodo != NULL; auxNodo = auxNodo->pointerNext) {
                     if (SORT_NAME == SORT_FIELD || SORT_PHONE == SORT_FIELD ) {
                         if (strcmp((char *)((char *)auxNodo->pointerPrevious + OFFSET), (char *)((char *)auxNodo + OFFSET)) > 0) {
+                            SHOULD_SWAP = 1;
+                        }
+                    }
+                    if (SORT_AGE == SORT_FIELD) {                      
+                        if (*(int *)((char *)auxNodo->pointerPrevious + OFFSET) - *(int *)((char *)auxNodo + OFFSET) > 0) {
+                            SHOULD_SWAP = 1;
+                        }
+                    }
+                
+                    if (SHOULD_SWAP == 1) {
+                        if (SORT_ORDER == ORDER_ASC) {
                             if(fila->pointerFirst == auxNodo->pointerPrevious) {
                                 fila->pointerFirst = auxNodo;
                             }
@@ -167,13 +180,8 @@ void sort(Fila *fila, void *pBuffer) {
                             auxNodo = swapNodo; 
                             nodo = fila->pointerFirst; 
                         }
-                    }
-                    else {
-                        if (SORT_AGE == SORT_FIELD) {                        
-                            if (((int *)((char *)nodo + OFFSET), (int *)((char *)auxNodo + OFFSET)) > 0) {
-                            }
+                            SHOULD_SWAP = 0;
                         }
-                    }
                 }
             }
 
