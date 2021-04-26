@@ -5,7 +5,6 @@
 
 #define QTD_VARIABLES (5 * sizeof(int))
 #define NAME_SIZE (10 * sizeof(char))
-#define PHONE_SIZE (12 * sizeof(char))
 
 #define OPTIONS (*(int*)(pBuffer))
 #define SORT_FIELD (*(int*)(pBuffer + sizeof(int)))
@@ -44,16 +43,17 @@ typedef struct fila Fila;
 void insert(Fila *fila) {
         fila->count++;
 
-        Nodo *nodo = malloc(sizeof(Nodo));
+        Nodo *nodo = (Nodo *) malloc(sizeof(Nodo));
+
+        nodo->pointerNext = NULL;
+        nodo->pointerPrevious = NULL;
 
         if (fila->pointerFirst == NULL) {
-            nodo->pointerNext = NULL;
-            nodo->pointerPrevious = NULL;
             fila->pointerFirst = nodo;
             fila->pointerLast = nodo;
         } else {
-            fila->pointerLast->pointerNext = nodo;
             nodo->pointerPrevious = fila->pointerLast;
+            fila->pointerLast->pointerNext = nodo;
             fila->pointerLast = nodo;
         }
 
@@ -73,8 +73,6 @@ void search(Fila *fila, void *pBuffer) {
 
         scanf("%s",  (char*)(pBuffer + QTD_VARIABLES));
         getchar();
-
-        printf("Nome: %s \n", (char*)(pBuffer + QTD_VARIABLES));
 
         for (nodo = fila->pointerFirst; nodo != NULL; nodo = nodo->pointerNext) {
             if(strcmp(nodo->person.name, (char*)(pBuffer + QTD_VARIABLES)) == 0) { 
@@ -124,11 +122,11 @@ void sort(Fila *fila, void *pBuffer) {
         scanf("%d", &SORT_FIELD);
         getchar(); 
 
-        printf("Como a agenda deve ser ordenada? \n1) Crescente\n2) Decrescente\n");
-        scanf("%d", &SORT_ORDER);
-        getchar();
-
         if (SORT_FIELD != SORT_NO) { 
+            printf("Como a agenda deve ser ordenada? \n1) Crescente\n2) Decrescente\n");
+            scanf("%d", &SORT_ORDER);
+            getchar();
+
             Nodo *auxNodo = malloc(sizeof(Nodo)); 
             Nodo *swapNodo = malloc(sizeof(Nodo)); 
 
@@ -184,11 +182,15 @@ void sort(Fila *fila, void *pBuffer) {
                         swapNodo->pointerNext = auxNodo->pointerPrevious;
                         swapNodo->pointerPrevious = auxNodo->pointerPrevious->pointerPrevious;
 
-                        auxNodo->pointerPrevious->pointerNext  = auxNodo->pointerNext; 
+                        auxNodo->pointerPrevious->pointerNext = auxNodo->pointerNext; 
                         auxNodo->pointerPrevious->pointerPrevious = auxNodo;
 
-                        auxNodo->pointerNext  = swapNodo->pointerNext; 
+                        auxNodo->pointerNext = swapNodo->pointerNext; 
                         auxNodo->pointerPrevious = swapNodo->pointerPrevious;
+
+                        if (auxNodo->pointerNext->pointerNext != NULL) {
+                            auxNodo->pointerNext->pointerNext->pointerPrevious = swapNodo->pointerNext;
+                        }
 
                         auxNodo = swapNodo; 
                         nodo = fila->pointerFirst; 
@@ -215,14 +217,16 @@ int main () {
     void *pBuffer = NULL;
     Fila *fila = (Fila *) malloc(sizeof(Fila));
     fila->count = 0;
+    fila->pointerFirst = NULL;
+    fila->pointerLast = NULL;
     
     pBuffer = malloc(QTD_VARIABLES + NAME_SIZE);
-
-    OPTIONS = 0;
 
     printf("Agenda\nRegras:\n1- Nome até 10 caracteres\n2- Telefones DDD+Número\n");
 
     do {
+        OPTIONS = 0;
+
         printf("1) Incluir\n2) Apagar\n3) Buscar\n4) Listar/Ordenar\n5) Sair\n");
         scanf("%d", &OPTIONS);
         getchar();
@@ -248,11 +252,15 @@ int main () {
 
                 break;
             }
+            case 5:
             default:
                 break;
         }
 
     } while(OPTIONS != 5);
+
+    if(fila != NULL) free(fila);
+    if(pBuffer != NULL) free(pBuffer);
       
     return 0;
 }
