@@ -149,39 +149,52 @@ void sort(Fila *fila, void *pBuffer) {
             for (nodo = fila->pointerFirst; nodo->pointerNext != NULL;nodo = nodo->pointerNext) {
                 for (auxNodo = nodo->pointerNext; auxNodo != NULL; auxNodo = auxNodo->pointerNext) {
                     if (SORT_NAME == SORT_FIELD || SORT_PHONE == SORT_FIELD ) {
-                        if (strcmp((char *)((char *)auxNodo->pointerPrevious + OFFSET), (char *)((char *)auxNodo + OFFSET)) > 0) {
-                            SHOULD_SWAP = 1;
-                        }
-                    }
-                    if (SORT_AGE == SORT_FIELD) {                      
-                        if (*(int *)((char *)auxNodo->pointerPrevious + OFFSET) - *(int *)((char *)auxNodo + OFFSET) > 0) {
-                            SHOULD_SWAP = 1;
-                        }
-                    }
-                
-                    if (SHOULD_SWAP == 1) {
-                        if (SORT_ORDER == ORDER_ASC) {
-                            if(fila->pointerFirst == auxNodo->pointerPrevious) {
-                                fila->pointerFirst = auxNodo;
+                        if (SORT_ORDER == ORDER_ASC) {                        
+                            if (strcmp((char *)((char *)auxNodo->pointerPrevious + OFFSET), (char *)((char *)auxNodo + OFFSET)) > 0) {
+                                SHOULD_SWAP = 1;
+                            }    
+                        }  
+                        if (SORT_ORDER == ORDER_DESC) {                       
+                            if (strcmp((char *)((char *)auxNodo->pointerPrevious + OFFSET), (char *)((char *)auxNodo + OFFSET)) < 0) {
+                                SHOULD_SWAP = 1;
                             }
-                            if(fila->pointerLast == auxNodo){
-                                fila->pointerLast = auxNodo->pointerPrevious;
-                            } 
-
-                            swapNodo->pointerNext = auxNodo->pointerPrevious;
-                            swapNodo->pointerPrevious = auxNodo->pointerPrevious->pointerPrevious;
-
-                            auxNodo->pointerPrevious->pointerNext  = auxNodo->pointerNext; 
-                            auxNodo->pointerPrevious->pointerPrevious = auxNodo;
-
-                            auxNodo->pointerNext  = swapNodo->pointerNext; 
-                            auxNodo->pointerPrevious = swapNodo->pointerPrevious;
-
-                            auxNodo = swapNodo; 
-                            nodo = fila->pointerFirst; 
                         }
-                            SHOULD_SWAP = 0;
+                    }
+                    if (SORT_AGE == SORT_FIELD) {     
+                        if (SORT_ORDER == ORDER_ASC) {                   
+                            if (*(int *)((char *)auxNodo->pointerPrevious + OFFSET) - *(int *)((char *)auxNodo + OFFSET) > 0) {
+                                SHOULD_SWAP = 1;
+                            }
+                        }                           
+                        if (SORT_ORDER == ORDER_DESC) {                   
+                            if (*(int *)((char *)auxNodo->pointerPrevious + OFFSET) - *(int *)((char *)auxNodo + OFFSET) < 0) {
+                                SHOULD_SWAP = 1;
+                            }
                         }
+                    }
+                    
+                    if (SHOULD_SWAP == 1) {
+                        if(fila->pointerFirst == auxNodo->pointerPrevious) {
+                            fila->pointerFirst = auxNodo;
+                        }
+                        if(fila->pointerLast == auxNodo){
+                            fila->pointerLast = auxNodo->pointerPrevious;
+                        } 
+
+                        swapNodo->pointerNext = auxNodo->pointerPrevious;
+                        swapNodo->pointerPrevious = auxNodo->pointerPrevious->pointerPrevious;
+
+                        auxNodo->pointerPrevious->pointerNext  = auxNodo->pointerNext; 
+                        auxNodo->pointerPrevious->pointerPrevious = auxNodo;
+
+                        auxNodo->pointerNext  = swapNodo->pointerNext; 
+                        auxNodo->pointerPrevious = swapNodo->pointerPrevious;
+
+                        auxNodo = swapNodo; 
+                        nodo = fila->pointerFirst; 
+                    }
+                    
+                    SHOULD_SWAP = 0;
                 }
             }
 
