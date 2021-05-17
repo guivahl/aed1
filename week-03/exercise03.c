@@ -138,7 +138,7 @@ int insert(Node **root, int value)
         }
     }
 
-    if ((*root)->value < value)
+    else if ((*root)->value < value)
     {
         if (insert(&(*root)->right, value))
         {
@@ -156,8 +156,8 @@ int insert(Node **root, int value)
 
 void freeTree (Node *root) { 
     if(root != NULL){
-        free(root->left);
-        free(root->right);
+        freeTree(root->left);
+        freeTree(root->right);
         free(root);
     }
 }
@@ -214,9 +214,12 @@ void testTree (Node *root)  {
             printf("\nNão é árvore AVL\n");
         }
     }
+    
+    printf("Inserindo o valor %d\n", root->value);
 
     show(root);
     freeTree(root);
+    // free(root);
 }
 
 int main()
